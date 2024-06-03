@@ -32,43 +32,29 @@
 2. Перейдите в корневую папку проекта.
 3. Установите зависимости, выполнив команду:
 
-gulp-gtp/
--│
--├── dist/ # Каталог сборки
--│ ├── css/ # Стили
-│ ├── fonts/ # Шрифты
-│ ├── img/ # Изображения
-│ └── js/ # JavaScript файлы
-│
-├── src/ # Исходные файлы проекта
-│ ├── assets/ # Ресурсы проекта
-│ │ ├── fonts/ # Шрифты
-│ │ ├── images/ # Изображения
-│ │ ├── scripts/ # JavaScript файлы
-|	|	|	└──	main.js
-│ │ └── index.js # Основной файл JavaScript
-│ │
-│ ├── blocks/ # Блоки Pug и Sass
-│ │   └── block-name/
-│ │     ├── block-name.pug
-│ │     ├── block-name.sass
-│ │     └── block-name.js
-│ ├── layouts/ # Макеты Pug
-│ │   └── layout.pug
-│ ├── pages/ # Страницы Pug
-|	|	├── about.pug
-|	|	├── index.pug
-|	|	└── 404.pug
-│ ├── sprites/ # Иконки SVG для спрайтов
-|	|	└── icons/
-|	|		└── icon.svg
-│ └── utils/ # Вспомогательные файлы Pug
-│
-├── .babelrc # Конфигурация Babel
-├── .eslintrc.json # Конфигурация ESLint
-├── gulpfile.js # Файл настроек Gulp
-├── package.json # Файл зависимостей проекта
-└── webpack.config.js # Конфигурация Webpack
+- gulp-gtp/
+  - dist/ # Каталог сборки
+    - css/ # Стили
+    - fonts/ # Шрифты
+    - img/ # Изображения
+    - js/ # JavaScript файлы
+  - src/ # Исходные файлы проекта
+    - assets/ # Ресурсы проекта
+      - fonts/ # Шрифты
+      - images/ # Изображения
+      - scripts/ # JavaScript файлы
+        - index.js # Основной файл JavaScript
+    - blocks/ # Блоки Pug и Sass
+    - layouts/ # Макеты Pug
+    - pages/ # Страницы Pug
+    - sprites/ # Иконки SVG для спрайтов
+    - utils/ # Вспомогательные файлы Pug
+  - .babelrc # Конфигурация Babel
+  - .eslintrc.json # Конфигурация ESLint
+  - gulpfile.js # Файл настроек Gulp
+  - package.json # Файл зависимостей проекта
+  - webpack.config.js # Конфигурация Webpack
+
 
 
 ## Команды сборки
