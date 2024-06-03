@@ -1,0 +1,11 @@
+extends ../layouts/layout
+
+block content
+	.container
+		.row 
+			.col-4
+				H1 Главная страница
+				+svg-icon('log', 'log-in-class')
+			.col-8
+				include ../blocks/article/article
+				

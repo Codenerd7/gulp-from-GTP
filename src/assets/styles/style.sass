@@ -1,0 +1,29 @@
+@import 'src/utils/variables.sass'
+@import 'src/blocks/menu/menu.sass'
+@import 'src/blocks/article/article.sass'
+
+body
+	display: flex
+	flex-direction: column
+	min-height: 100vh
+	margin: 0
+	background-color: $background
+	.header
+		width: 100%
+		height: 150px
+		background-color: $background_shade
+	.content
+		flex: 1
+		padding: 20px
+		p
+			color: $white
+		.log-in-class
+			width: 65px
+			height: 65px
+			color: $primary-green
+			&:hover
+				color: red
+	.footer
+		width: 100%
+		height: 250px
+		background-color: $background_shade
