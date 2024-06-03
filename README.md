@@ -46,7 +46,7 @@ gulp-gtp/
 │ │ ├── fonts/ # Шрифты
 │ │ ├── images/ # Изображения
 │ │ ├── scripts/ # JavaScript файлы
-| | |	└──	main.js
+| | |	└──  main.js
 │ │ └── index.js # Основной файл JavaScript
 │ │
 │ ├── blocks/ # Блоки Pug и Sass
@@ -57,12 +57,12 @@ gulp-gtp/
 │ ├── layouts/ # Макеты Pug
 │ │   └── layout.pug
 │ ├── pages/ # Страницы Pug
-|	|	├── about.pug
-|	|	├── index.pug
-|	|	└── 404.pug
+| |	├── about.pug
+| |	├── index.pug
+| |	└── 404.pug
 │ ├── sprites/ # Иконки SVG для спрайтов
-|	|	└── icons/
-|	|		└── icon.svg
+| |	└── icons/
+| |		└── icon.svg
 │ └── utils/ # Вспомогательные файлы Pug
 │
 ├── .babelrc # Конфигурация Babel
