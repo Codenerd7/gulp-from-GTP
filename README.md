@@ -46,7 +46,7 @@ gulp-gtp/
 │ │ ├── fonts/ # Шрифты
 │ │ ├── images/ # Изображения
 │ │ ├── scripts/ # JavaScript файлы
-|	|	|	└──	main.js
+| | |	└──	main.js
 │ │ └── index.js # Основной файл JavaScript
 │ │
 │ ├── blocks/ # Блоки Pug и Sass
