@@ -18,6 +18,8 @@ const replace = require('gulp-replace');
 const sourcemaps = require('gulp-sourcemaps');
 const babel = require('gulp-babel');
 const htmlmin = require('gulp-htmlmin');
+const spritesmith = require('gulp.spritesmith');
+const merge = require('merge-stream');
 
 // Пути к файлам
 const paths = {
@@ -26,25 +28,26 @@ const paths = {
 	pug: 'src/pages/**/*.pug',
 	pugAll: ['src/pages/**/*.pug', 'src/layouts/**/*.pug', 'src/blocks/**/*.pug', 'src/utils/**/*.pug'], // Для отслеживания изменений
 	styles: 'src/assets/styles/style.sass',
-	stylesAll: ['src/assets/styles/style.sass', 'src/blocks/**/*.sass', 'src/utils/**/*.sass'], // Для отслеживания изменений
+	stylesAll: ['src/assets/styles/*.sass', 'src/blocks/**/*.sass', 'src/utils/**/*.sass'], // Для отслеживания изменений
 	scripts: 'src/**/*.js',
 	images: 'src/assets/images/**/*',
 	fonts: 'src/assets/fonts/**/*',
-	sprites: 'src/sprites/icons/**/*.svg'
+	pngSprites: 'src/sprites/png/*.png',
+	sprites: 'src/sprites/svg/**/*.svg'
 };
 
 // Конфигурация для SVG спрайтов
 const svgConfig = {
 	mode: {
 		symbol: {
-			sprite: "../sprite.svg" // Спрайт будет сохранен как sprite.svg в каталоге icons
+			sprite: "../sprite.svg" // Спрайт будет сохранен как sprite.svg в каталоге svg
 		}
 	}
 };
 
 // Компиляция Pug в HTML с инжектом спрайта
 function compilePug() {
-	const svgSource = gulp.src(paths.dist + 'img/icons/sprite.svg', { allowEmpty: true });
+	const svgSource = gulp.src(paths.dist + 'img/svg/sprite.svg', { allowEmpty: true });
 	return gulp.src(paths.pug)
 		.pipe(plumber({ errorHandler: notify.onError("Error: <%= error.message %>") }))
 		.pipe(inject(svgSource, {
@@ -55,6 +58,25 @@ function compilePug() {
 		.pipe(pug({ pretty: true }))
 		.pipe(gulp.dest(paths.dist))
 		.pipe(browserSync.stream());
+}
+
+// Создание PNG спрайтов
+function createPngSprite() {
+	const spriteData = gulp.src(paths.pngSprites).pipe(spritesmith({
+		imgName: 'sprite.png', // Имя спрайта
+		cssName: 'png-sprite.sass', // Имя файла CSS
+		padding: 20, // Отступ между изображениями в спрайте
+		imgPath: '../img/png/sprite.png',
+		cssFormat: 'sass'
+	}));
+
+	const cssStream = spriteData.css
+		.pipe(gulp.dest('src/assets/styles')); // Сохраняем файл CSS
+	const imgStream = spriteData.img
+		.pipe(gulp.dest('dist/img/png')); // Сохраняем спрайт изображений
+
+
+	return merge(imgStream, cssStream);
 }
 
 // Компиляция Sass в CSS без минификации
@@ -99,6 +121,8 @@ function copyFonts() {
 		.pipe(browserSync.stream());
 }
 
+
+
 // Создание SVG спрайтов
 function createSvgSprite() {
 	return gulp.src(paths.sprites)
@@ -118,7 +142,7 @@ function createSvgSprite() {
 			parserOptions: { xmlMode: true }
 		}))
 		.pipe(svgSprite(svgConfig))
-		.pipe(gulp.dest(paths.dist + 'img/icons'))
+		.pipe(gulp.dest(paths.dist + 'img/svg'))
 		.pipe(browserSync.stream());
 }
 
@@ -135,6 +159,9 @@ function minifyCSS() {
 		.pipe(cleanCSS())
 		.pipe(gulp.dest(paths.dist + 'css'));
 }
+
+// Минификация JavaScript
+
 
 // Минификация JavaScript
 function minifyJS() {
@@ -162,10 +189,13 @@ function serve() {
 
 	gulp.watch(paths.pugAll, compilePug); // Отслеживание всех Pug файлов
 	gulp.watch(paths.styles, compileSass);
+	gulp.watch(paths.styles, createPngSprite);
 	gulp.watch(paths.stylesAll, compileSass); // Отслеживание всех Pug файлов
 	gulp.watch(paths.scripts, compileScripts);
 	gulp.watch(paths.images, optimizeImages);
 	gulp.watch(paths.fonts, copyFonts);
+	gulp.watch(paths.pngSprites, createPngSprite);
+	gulp.watch(paths.pngSprites, compileSass);
 	gulp.watch(paths.sprites, createSvgSprite);
 }
 
@@ -176,10 +206,11 @@ exports.compileSass = compileSass;
 exports.compileScripts = compileScripts;
 exports.optimizeImages = optimizeImages;
 exports.copyFonts = copyFonts;
+exports.createPngSprite = createPngSprite;
 exports.createSvgSprite = createSvgSprite;
 exports.serve = serve;
 
-const build = gulp.series(clean, createSvgSprite, gulp.parallel(compilePug, compileSass, compileScripts, optimizeImages, copyFonts));
+const build = gulp.series(clean, createSvgSprite, createPngSprite, gulp.parallel(compilePug, compileSass, compileScripts, optimizeImages, copyFonts));
 
 // Задача для полного сбора проекта без минификации
 gulp.task('build', build);

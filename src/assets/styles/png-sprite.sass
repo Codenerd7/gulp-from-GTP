@@ -1,0 +1,132 @@
+// SASS variables are information about icon's compiled state, stored under its original file name
+//
+// .icon-home
+//   width: $icon-home-width
+//
+// The large array-like variables contain all information about a single icon
+// $icon-home: x y offset_x offset_y width height total_width total_height image_path
+//
+// At the bottom of this section, we provide information about the spritesheet itself
+// $spritesheet: width height image $spritesheet-sprites
+$avvvatar-name: 'avvvatar'
+$avvvatar-x: 0px
+$avvvatar-y: 148px
+$avvvatar-offset-x: 0px
+$avvvatar-offset-y: -148px
+$avvvatar-width: 48px
+$avvvatar-height: 48px
+$avvvatar-total-width: 212px
+$avvvatar-total-height: 196px
+$avvvatar-image: '../img/png/sprite.png'
+$avvvatar: (0px, 148px, 0px, -148px, 48px, 48px, 212px, 196px, '../img/png/sprite.png', 'avvvatar', )
+$cristiano-ronaldo-avatar-icon-263214-name: 'cristiano_ronaldo_avatar_icon_263214'
+$cristiano-ronaldo-avatar-icon-263214-x: 148px
+$cristiano-ronaldo-avatar-icon-263214-y: 84px
+$cristiano-ronaldo-avatar-icon-263214-offset-x: -148px
+$cristiano-ronaldo-avatar-icon-263214-offset-y: -84px
+$cristiano-ronaldo-avatar-icon-263214-width: 32px
+$cristiano-ronaldo-avatar-icon-263214-height: 32px
+$cristiano-ronaldo-avatar-icon-263214-total-width: 212px
+$cristiano-ronaldo-avatar-icon-263214-total-height: 196px
+$cristiano-ronaldo-avatar-icon-263214-image: '../img/png/sprite.png'
+$cristiano-ronaldo-avatar-icon-263214: (148px, 84px, -148px, -84px, 32px, 32px, 212px, 196px, '../img/png/sprite.png', 'cristiano_ronaldo_avatar_icon_263214', )
+$hhyhdh-name: 'hhyhdh'
+$hhyhdh-x: 68px
+$hhyhdh-y: 148px
+$hhyhdh-offset-x: -68px
+$hhyhdh-offset-y: -148px
+$hhyhdh-width: 32px
+$hhyhdh-height: 32px
+$hhyhdh-total-width: 212px
+$hhyhdh-total-height: 196px
+$hhyhdh-image: '../img/png/sprite.png'
+$hhyhdh: (68px, 148px, -68px, -148px, 32px, 32px, 212px, 196px, '../img/png/sprite.png', 'hhyhdh', )
+$icons5-name: 'icons5'
+$icons5-x: 148px
+$icons5-y: 0px
+$icons5-offset-x: -148px
+$icons5-offset-y: 0px
+$icons5-width: 64px
+$icons5-height: 64px
+$icons5-total-width: 212px
+$icons5-total-height: 196px
+$icons5-image: '../img/png/sprite.png'
+$icons5: (148px, 0px, -148px, 0px, 64px, 64px, 212px, 196px, '../img/png/sprite.png', 'icons5', )
+$twit-name: 'twit'
+$twit-x: 0px
+$twit-y: 0px
+$twit-offset-x: 0px
+$twit-offset-y: 0px
+$twit-width: 128px
+$twit-height: 128px
+$twit-total-width: 212px
+$twit-total-height: 196px
+$twit-image: '../img/png/sprite.png'
+$twit: (0px, 0px, 0px, 0px, 128px, 128px, 212px, 196px, '../img/png/sprite.png', 'twit', )
+$youtube-name: 'youtube'
+$youtube-x: 120px
+$youtube-y: 148px
+$youtube-offset-x: -120px
+$youtube-offset-y: -148px
+$youtube-width: 32px
+$youtube-height: 32px
+$youtube-total-width: 212px
+$youtube-total-height: 196px
+$youtube-image: '../img/png/sprite.png'
+$youtube: (120px, 148px, -120px, -148px, 32px, 32px, 212px, 196px, '../img/png/sprite.png', 'youtube', )
+$spritesheet-width: 212px
+$spritesheet-height: 196px
+$spritesheet-image: '../img/png/sprite.png'
+$spritesheet-sprites: ($avvvatar, $cristiano-ronaldo-avatar-icon-263214, $hhyhdh, $icons5, $twit, $youtube, )
+$spritesheet: (212px, 196px, '../img/png/sprite.png', $spritesheet-sprites, )
+
+// The provided mixins are intended to be used with the array-like variables
+//
+// .icon-home
+//   @include sprite-width($icon-home)
+//
+// .icon-email
+//   @include sprite($icon-email)
+//
+// Example usage in HTML:
+//   `display: block` sprite:
+//   <div class="icon-home"></div>
+//
+// To change `display` (e.g. `display: inline-block;`), we suggest using a common CSS class:
+//   // CSS
+//   .icon {
+//     display: inline-block;
+//   }
+//
+//   // HTML
+//   <i class="icon icon-home"></i>
+@mixin sprite-width($sprite)
+  width: nth($sprite, 5)
+
+@mixin sprite-height($sprite)
+  height: nth($sprite, 6)
+
+@mixin sprite-position($sprite)
+  $sprite-offset-x: nth($sprite, 3)
+  $sprite-offset-y: nth($sprite, 4)
+  background-position: $sprite-offset-x  $sprite-offset-y
+
+@mixin sprite-image($sprite)
+  $sprite-image: nth($sprite, 9)
+  background-image: url(#{$sprite-image})
+
+@mixin sprite($sprite)
+  @include sprite-image($sprite)
+  @include sprite-position($sprite)
+  @include sprite-width($sprite)
+  @include sprite-height($sprite)
+
+// The `sprites` mixin generates identical output to the CSS template
+//   but can be overridden inside of SASS
+//
+// @include sprites($spritesheet-sprites)
+@mixin sprites($sprites)
+  @each $sprite in $sprites
+    $sprite-name: nth($sprite, 10)
+    .#{$sprite-name}
+      @include sprite($sprite)

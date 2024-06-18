@@ -1,6 +1,8 @@
 @import 'src/utils/variables.sass'
 @import 'src/blocks/menu/menu.sass'
 @import 'src/blocks/article/article.sass'
+@import 'src/utils/mixins.sass'
+@import 'png-sprite'
 
 body
 	display: flex
@@ -12,17 +14,23 @@ body
 		width: 100%
 		height: 150px
 		background-color: $background_shade
+		.youtube
+			@include sprite($youtube)
 	.content
 		flex: 1
 		padding: 20px
 		p
 			color: $white
+		.icons5
+			@include sprite($icons5)
+
 		.log-in-class
 			width: 65px
 			height: 65px
 			color: $primary-green
 			&:hover
 				color: red
+
 	.footer
 		width: 100%
 		height: 250px
