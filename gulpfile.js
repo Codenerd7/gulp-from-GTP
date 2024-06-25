@@ -20,6 +20,8 @@ const babel = require('gulp-babel');
 const htmlmin = require('gulp-htmlmin');
 const spritesmith = require('gulp.spritesmith');
 const merge = require('merge-stream');
+const realFavicon = require('gulp-real-favicon');
+const fs = require('fs'); // Это уже должно быть в вашем gulpfile.js
 
 // Пути к файлам
 const paths = {
@@ -35,6 +37,110 @@ const paths = {
 	pngSprites: 'src/sprites/png/*.png',
 	sprites: 'src/sprites/svg/**/*.svg'
 };
+
+// Конфигурация для генерации фавиконок
+const FAVICON_DATA_FILE = 'src/assets/images/favicon/faviconData.json';
+const MASTER_PICTURE = 'src/assets/images/favicon/favicon.png';
+const FAVICON_DEST = 'dist/img/favicon/';
+
+
+// Проверяем существование файла с изображением
+if (!fs.existsSync(MASTER_PICTURE)) {
+	throw new Error('Файл с изображением не существует: ' + MASTER_PICTURE);
+}
+
+
+// Задача для генерации фавиконок
+gulp.task('generate-favicon', function (done) {
+	realFavicon.generateFavicon({
+		masterPicture: MASTER_PICTURE,
+		dest: FAVICON_DEST,
+		iconsPath: 'img/favicon', // Путь к фавиконкам относительно корня сайта
+		design: {
+			ios: {
+				pictureAspect: 'backgroundAndMargin',
+				backgroundColor: '#ffffff',
+				margin: '14%',
+				assets: {
+					ios6AndPriorIcons: false,
+					ios7AndLaterIcons: true,
+					precomposedIcons: true,
+					declareOnlyDefaultIcon: true
+				}
+			},
+			desktopBrowser: {},
+			windows: {
+				pictureAspect: 'noChange',
+				backgroundColor: '#da532c',
+				onConflict: 'override',
+				assets: {
+					windows80Ie10Tile: false,
+					windows10Ie11EdgeTiles: {
+						small: true,
+						medium: true,
+						big: true,
+						rectangle: true
+					}
+				}
+			},
+			androidChrome: {
+				pictureAspect: 'shadow',
+				themeColor: '#ffffff',
+				manifest: {
+					name: 'Your App Name',
+					display: 'standalone',
+					orientation: 'notSet',
+					onConflict: 'override',
+					declared: true
+				},
+				assets: {
+					legacyIcon: false,
+					lowResolutionIcons: false
+				}
+			},
+			safariPinnedTab: {
+				pictureAspect: 'silhouette',
+				themeColor: '#5bbad5'
+			}
+		},
+		settings: {
+			compression: 5,
+			scalingAlgorithm: 'Mitchell',
+			errorOnImageTooSmall: false,
+			readmeFile: false,
+			htmlCodeFile: false,
+			usePathAsIs: false
+		},
+		markupFile: FAVICON_DATA_FILE
+	}, function () {
+		done();
+	});
+});
+
+// Задача для вставки метатегов в HTML
+gulp.task('inject-favicon-markups', function () {
+	// Читаем файл с данными о фавиконках
+	const faviconData = JSON.parse(fs.readFileSync(FAVICON_DATA_FILE));
+
+	return gulp.src('dist/**/*.html') // Пути к вашим HTML файлам
+		.pipe(realFavicon.injectFaviconMarkups(faviconData.favicon.html_code))
+		.pipe(gulp.dest('dist')); // Путь для сохранения HTML файлов с вставленными метатегами
+});
+
+//Задача для проверки обновлений фавиконок
+gulp.task('check-for-favicon-update', function (done) {
+	// Читаем текущую версию из файла с данными о фавиконках
+	const currentVersion = JSON.parse(fs.readFileSync(FAVICON_DATA_FILE)).version;
+
+	realFavicon.checkForUpdates(currentVersion, function (err) {
+		if (err) {
+			throw err;
+		}
+		done();
+	});
+});
+
+
 
 // Конфигурация для SVG спрайтов
 const svgConfig = {
@@ -210,7 +316,25 @@ exports.createPngSprite = createPngSprite;
 exports.createSvgSprite = createSvgSprite;
 exports.serve = serve;
 
-const build = gulp.series(clean, createSvgSprite, createPngSprite, gulp.parallel(compilePug, compileSass, compileScripts, optimizeImages, copyFonts));
+
+const build = gulp.series(
+	clean,
+	createSvgSprite,
+	createPngSprite,
+	'generate-favicon',
+	gulp.parallel(
+		compilePug,
+		compileSass,
+		compileScripts,
+		optimizeImages,
+		copyFonts,
+		'check-for-favicon-update'
+
+	),
+	'inject-favicon-markups'
+
+
+);
 
 // Задача для полного сбора проекта без минификации
 gulp.task('build', build);
